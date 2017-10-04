@@ -1,0 +1,13 @@
+{
+    "name": "bstoots/wox-php",
+    "description": "WOX is an XML serializer for PHP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Brian Stoots",
+            "email": "bstoots@gmail.com"
+        }
+    ],
+    "require": {}
+}
