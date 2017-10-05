@@ -78,7 +78,7 @@ class SimpleReader implements ObjectReader {
     else if ($xob->getAttribute(static::TYPE) === static::ARRAY) {
       $ob = $this->readObjectArray($xob, $id);
     }
-    else if ( Util::isStringableType($xob->getAttribute(static::TYPE)) ) {
+    else if ( Util::isStringableType(static::mapWoxToPhp($xob->getAttribute(static::TYPE))) ) {
       $ob = $this->readStringObject($xob, $id);
     }
     // assume we have a normal object with some fields to set
@@ -129,7 +129,7 @@ class SimpleReader implements ObjectReader {
     foreach ($xob->childNodes as $childNode) {
       if ($childNode instanceof DOMElement) {
         $name = $childNode->getAttribute(static::NAME);
-        $type = $childNode->getAttribute(static::TYPE);
+        $type = static::mapWoxToPhp($childNode->getAttribute(static::TYPE));
         if (Util::isPrimitiveType($type)) {
           $ob->$name = Util::castToType($childNode->getAttribute(static::VALUE), $type);
         }
@@ -150,10 +150,12 @@ class SimpleReader implements ObjectReader {
    * @return boolean
    */
   private function isPrimitiveArray(DOMNode $xob): bool {
-    if ($xob->getAttribute(static::TYPE) !== static::ARRAY) {
+    $type = static::mapWoxToPhp($xob->getAttribute(static::TYPE));
+    $elementType = static::mapWoxToPhp($xob->getAttribute(static::ELEMENT_TYPE));
+    if ($type !== static::ARRAY) {
       return false;
     }
-    if (!Util::isPrimitiveType($xob->getAttribute(static::ELEMENT_TYPE))) {
+    if (!Util::isPrimitiveType($elementType)) {
       return false;
     }
     // @TODO - This is such a bad idea ... what happens if the the array contains strings with spaces?
@@ -170,7 +172,7 @@ class SimpleReader implements ObjectReader {
   private function readPrimitiveArray(DOMNode $xob, $id) {
     $array = explode(' ', $xob->nodeValue);
     foreach ($array as $key => &$value) {
-      $value = Util::castToType($value, $xob->getAttribute(static::ELEMENT_TYPE));
+      $value = Util::castToType($value, static::mapWoxToPhp($xob->getAttribute(static::ELEMENT_TYPE)));
     }
     return $array;
   }
@@ -196,7 +198,7 @@ class SimpleReader implements ObjectReader {
    * @return array
    */
   private function readObjectArrayGeneric(DOMNode $xob, $id): array {
-    $arrayTypeName = $xob->getAttribute(static::ELEMENT_TYPE);
+    $arrayTypeName = static::mapWoxToPhp($xob->getAttribute(static::ELEMENT_TYPE));
     $array = [];
     // @TODO - Perhaps we want to do map caching here instead of in readObjectArray?
     //map.put(id, array);

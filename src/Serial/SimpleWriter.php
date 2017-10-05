@@ -108,21 +108,21 @@ class SimpleWriter implements ObjectWriter {
     $this->map->attach($ob, $this->count++);
 
     //check if the object can go to string (wrapper objects - Integer, Boolean, etc.)
-    if ( is_string(($obString = Util::stringify($ob))) ) {
+    if ( Util::isStringable($ob) ) {
       $element = $this->dom->createElement(static::OBJECT);
       // @TODO - When will this case ever be encountered?
       $woxType = 'SOMETHING';
       $element->setAttribute(static::TYPE, $woxType);
-      $element->setAttribute(static::VALUE, $obString);
+      $element->setAttribute(static::VALUE, Util::stringify($ob));
     }
     else if ($ob instanceof ArrayObject) {
       $element = $this->writeArray($ob);
     }
     else {
       $element = $this->dom->createElement(static::OBJECT);
-      // @TODO - Instead of using getClassShortName() here we may want to do some sort of 
+      // @TODO - Instead of hard-coding basename here we may want to do some sort of 
       //         reverse classMap as we did in the SimpleReader implementation.
-      $element->setAttribute(static::TYPE, Util::getClassShortName($ob));
+      $element->setAttribute(static::TYPE, Util::getType($ob, Util::TYPE_MODE_SHORT));
       $this->writeFields($ob, $element, $this->dom);
     }
     $id = '';
@@ -149,10 +149,10 @@ class SimpleWriter implements ObjectWriter {
       $value = $ob->$name;
       //if the field is a primitive data type (int, float, etc.)
       $field = $this->dom->createElement(static::FIELD);
-      if ( is_string(($valueString = Util::stringify($ob->$name))) ) {
+      if ( Util::isStringable($ob->$name) ) {
         $field->setAttribute(static::NAME, $name);
-        $field->setAttribute(static::TYPE, static::mapPhpToWox(Util::getType($ob->$name)));
-        $field->setAttribute(static::VALUE, $valueString);
+        $field->setAttribute(static::TYPE, static::mapPhpToWox(Util::getType($ob->$name, Util::TYPE_MODE_SHORT)));
+        $field->setAttribute(static::VALUE, Util::stringify($ob->$name));
       }
       // if the field is in the map (it could be a Wrapper or a String object)
       // this aims to have a more compact encoding in the XML file.
@@ -198,7 +198,7 @@ class SimpleWriter implements ObjectWriter {
     //it gets the correct WOX type from the map, in case there is one
     //for example for int[][].class it will get int[][]
     // String woxType = (String)mapJavaToWOX.get(ob.getClass().getComponentType());
-    $woxType = static::mapPhpToWox(Util::getArrayType($ob));
+    $woxType = static::mapPhpToWox(Util::getArrayType($ob, Util::TYPE_MODE_SHORT));
     // el.setAttribute(ELEMENT_TYPE, woxType);
     $element->setAttribute(static::ELEMENT_TYPE, $woxType);
     $element->setAttribute(static::LENGTH, count($ob));
@@ -231,7 +231,7 @@ class SimpleWriter implements ObjectWriter {
    * @return DOMNode
    */
   private function writeObjectArrayGeneric($ob, DOMNode $element): DOMNode {
-    $arrayType = Util::getArrayType($ob);
+    $arrayType = Util::getArrayType($ob, Util::TYPE_MODE_SHORT);
     $woxType = static::mapPhpToWox($arrayType);
     if ($woxType === null) {
       $woxType = $arrayType;
