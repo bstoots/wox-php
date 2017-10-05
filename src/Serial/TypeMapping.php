@@ -13,14 +13,17 @@ trait TypeMapping {
     switch ($phpType) {
       // 'byte.class' => "byte",
       // 'short.class' => "short",
+      case 'int':
       case 'integer':
         return 'int';
       // 'long.class' => "long",
+      case 'double':
       case 'float':
-        return 'float';
+        return 'double';
       // 'double.class' => "double",
       // 'char.class' => "char",
       case 'bool':
+      case 'boolean':
         return 'boolean';
       // 'Byte.class' => "byte",
       // 'Short.class' => "short",
@@ -36,6 +39,7 @@ trait TypeMapping {
       // 'Class.class' => "class",
       //mapJavaToWOX.put(Array.class, "array");
       default:
+        var_dump($phpType);
         return null;
     }
   }

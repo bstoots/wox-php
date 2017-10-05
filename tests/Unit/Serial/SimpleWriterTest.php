@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Bstoots\WOX\Tests\Unit\Serial;
 
 use PHPUnit\Framework\TestCase;
-use Bstoots\WOX\Tests\Stubs\{Student, Course};
+use Bstoots\WOX\Tests\Stubs\{Student, Course, Product};
 use Bstoots\WOX\Serial\{SimpleWriter, XmlUtil};
 
 /**
@@ -27,7 +27,7 @@ final class SimpleWriterTest extends TestCase {
     );
   }
 
-  public function testObject() {
+  public function testStudent() {
     $courses = [];
     $courses[] = new Course([
       'code' => 6756,
@@ -80,6 +80,33 @@ XML;
     $this->assertEquals(
       XmlUtil::pretty($expectedXml),
       XmlUtil::pretty($writer->write($student))
+    );
+  }
+
+  public function testProduct() {
+    $product = new Product([
+      'name' => "Corn Flakes",
+      'price' => 3.98,
+      'grams' => 500,
+      'registered' => true,
+    ]);
+    $writer = new SimpleWriter();
+    // http://woxserializer.sourceforge.net/primitives.html
+    // @TODO - PHP doesn't have an abstraction for char such as:
+    // <field name="category" type="char" value="\u0041" />
+    // I can look into creating one but for now I'm just not touching this
+    $expectedXml = <<<XML
+<object type="Product" id="0">
+    <field name="name" type="string" value="Corn Flakes" />
+    <field name="price" type="double" value="3.98" />
+    <field name="grams" type="int" value="500" />
+    <field name="registered" type="boolean" value="true" />
+</object>   
+XML;
+    // 
+    $this->assertEquals(
+      XmlUtil::pretty($expectedXml),
+      XmlUtil::pretty($writer->write($product))
     );
   }
 
