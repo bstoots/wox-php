@@ -27,6 +27,28 @@ final class SimpleWriterTest extends TestCase {
     );
   }
 
+  public function testCourse() {
+    $course = new Course([
+      'code' => 6756,
+      'name' => "XML and Related Technologies",
+      'term' => 2
+    ]);
+    $writer = new SimpleWriter();
+    // http://woxserializer.sourceforge.net/quick.html
+    $expectedXml = <<<XML
+<object type="Course" id="0">
+    <field name="code" type="int" value="6756" />
+    <field name="name" type="string" value="XML and Related Technologies" />
+    <field name="term" type="int" value="2" />
+</object>
+XML;
+    // 
+    $this->assertEquals(
+      XmlUtil::pretty($expectedXml),
+      XmlUtil::pretty($writer->write($course))
+    );
+  }
+
   public function testStudent() {
     $courses = [];
     $courses[] = new Course([
