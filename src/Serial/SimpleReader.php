@@ -81,7 +81,7 @@ class SimpleReader implements ObjectReader {
         //System.out.println("readPrimitiveArray: " + xob.getAttributeValue(TYPE));
         $ob = $this->readPrimitiveArray($xob, $id);
       }
-      else if (is_array($xob)) {
+      else if ($xob->getAttribute(static::TYPE) === static::ARRAY) {
         //System.out.println("readObjectArray: " + xob.getAttributeValue(TYPE));
         $ob = $this->readObjectArray($xob, $id);
       }
@@ -232,12 +232,34 @@ class SimpleReader implements ObjectReader {
    * @param ob The object to set the fields.
    * @param xob A JDOM element.
    */
-  private function setFields(/*Object*/ $ob, /*Element*/ $xob)/*: void*/ {
+  private function setFields(/*Object*/ &$ob, /*Element*/ $xob)/*: void*/ {
       
       foreach ($xob->childNodes as $childNode) {
         if ($childNode instanceof DOMElement) {
           $name = $childNode->getAttribute(static::NAME);
-          $ob->$name = $childNode->getAttribute(static::VALUE);
+          $type = $childNode->getAttribute(static::TYPE);
+          if (Util::isPrimitiveType($type)) {
+            $ob->$name = $childNode->getAttribute(static::VALUE);
+          }
+          else if ($type === static::ARRAY) {
+            $ob = (array) $this->readElement($childNode);
+          }
+          else {
+            // must be an object with only one child
+            // System.out.println("Object");
+            //Element child = (Element) fe.getChildren().iterator().next();
+            $ob->$name = $this->readElement($childNode);
+          }
+          // 
+          // var_dump(
+          //   $ob,
+          //   $name,
+          //   $type
+          // );
+          // $ob->$name = $value;
+        }
+        else {
+          // @TODO - ???
         }
       }
 
@@ -468,7 +490,75 @@ class SimpleReader implements ObjectReader {
   //     }
   // }
 
+  /**
+   * Reads an Array of objects.
+   * @param xob A JDOM element.
+   * @param id The id for the object.
+   * @return A live object.
+   */
+  private function readObjectArray(/*Element*/ $xob, /*Object*/ $id)/*: Object*/ {
+    // Object array = readObjectArrayGeneric(xob,id);
+    $array = $this->readObjectArrayGeneric($xob, $id);
+    $this->map->attach(new ArrayObject($array), $id);
+    return $array;
+  }
+
+  /**
+   * Reads an Array of objects.
+   * @param xob A JDOM element.
+   * @param id The id for the object.
+   * @return A live object.
+   */
+  private function readObjectArrayGeneric(/*Element*/ $xob, /*Object*/ $id): array /*: Object*/ {
+      // to read an object array we first determine the
+      // class of the array - leave this to a separate method
+      // since there seems to be no automatic way to get the
+      // type of the array
+
+      //System.out.println("--------------------READ OBJECT ARRAY");
+      // try {
+          //String arrayTypeName = xob.getAttributeValue(TYPE);
+          $arrayTypeName = $xob->getAttribute(static::ELEMENT_TYPE);
+          // int len = Integer.parseInt(xob.getAttributeValue(LENGTH));
+          // Class componentType = getObjectArrayComponentType(arrayTypeName);
+          // Object array = Array.newInstance(componentType, len);
+          $array = [];
+          //map.put(id, array);
+          // now fill in the array
+          foreach ($xob->childNodes as $childNode) {
+            if ($childNode instanceof DOMElement) {
+              $array[] = $this->readElement($childNode);
+            }
+            else {
+              // @TODO - What?
+            }
+          }
+          return $array;
+
+          // Java impl:
+          // List children = xob.getChildren();
+          // int index = 0;
+          // for (Iterator i = children.iterator(); i.hasNext();) {
+          //     //System.out.println("before reading...");
+          //     Object childArray = read((Element) i.next());
+          //     //System.out.println(index + " child: " + childArray);
+          //     Array.set(array, index++, childArray);
+          // }
+          // return array;
+      // }
+      // catch (Exception e) {
+      //     e.printStackTrace();
+      //     throw new RuntimeException(e);
+      // }
+  }
+
+////////////////////////////////
+// END OF CLASS
+////////////////////////////////
 }
+////////////////////////////////
+// END OF CLASS
+////////////////////////////////
 
 // 
 // Java Implementation
@@ -857,83 +947,10 @@ class SimpleReader implements ObjectReader {
 //     }
 
 
-//     /**
-//      * Reads an Array of objects.
-//      * @param xob A JDOM element.
-//      * @param id The id for the object.
-//      * @return A live object.
-//      */
-//     private Object readObjectArray(Element xob, Object id) {
-
-//         Object array = readObjectArrayGeneric(xob,id);
-//         map.put(id, array);
-//         return array;
-
-//         // to read an object array we first determine the
-//         // class of the array - leave this to a separate method
-//         // since there seems to be no automatic way to get the
-//         // type of the array
-
-//         //System.out.println("--------------------READ OBJECT ARRAY");
-//         /* try {
-//         //String arrayTypeName = xob.getAttributeValue(TYPE);
-//         String arrayTypeName = xob.getAttributeValue(ELEMENT_TYPE);
-//         int len = Integer.parseInt(xob.getAttributeValue(LENGTH));
-//         Class componentType = getObjectArrayComponentType(arrayTypeName);
-//         Object array = Array.newInstance(componentType, len);
-//         map.put(id, array);
-//         // now fill in the array
-//         List children = xob.getChildren();
-//         int index = 0;
-//         for (Iterator i = children.iterator(); i.hasNext();) {
-//         //System.out.println("before reading...");
-//         Object childArray = read((Element) i.next());
-//         //System.out.println(index + " child: " + childArray);
-//         Array.set(array, index++, childArray);
-//         }
-//         return array;
-//         } catch (Exception e) {
-//         e.printStackTrace();
-//         throw new RuntimeException(e);
-//         } */
-//     }
 
 
-//     /**
-//      * Reads an Array of objects.
-//      * @param xob A JDOM element.
-//      * @param id The id for the object.
-//      * @return A live object.
-//      */
-//     private Object readObjectArrayGeneric(Element xob, Object id) {
-//         // to read an object array we first determine the
-//         // class of the array - leave this to a separate method
-//         // since there seems to be no automatic way to get the
-//         // type of the array
 
-//         //System.out.println("--------------------READ OBJECT ARRAY");
-//         try {
-//             //String arrayTypeName = xob.getAttributeValue(TYPE);
-//             String arrayTypeName = xob.getAttributeValue(ELEMENT_TYPE);
-//             int len = Integer.parseInt(xob.getAttributeValue(LENGTH));
-//             Class componentType = getObjectArrayComponentType(arrayTypeName);
-//             Object array = Array.newInstance(componentType, len);
-//             //map.put(id, array);
-//             // now fill in the array
-//             List children = xob.getChildren();
-//             int index = 0;
-//             for (Iterator i = children.iterator(); i.hasNext();) {
-//                 //System.out.println("before reading...");
-//                 Object childArray = read((Element) i.next());
-//                 //System.out.println(index + " child: " + childArray);
-//                 Array.set(array, index++, childArray);
-//             }
-//             return array;
-//         } catch (Exception e) {
-//             e.printStackTrace();
-//             throw new RuntimeException(e);
-//         }
-//     }
+
 
 
 //     /**

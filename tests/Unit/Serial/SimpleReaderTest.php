@@ -103,8 +103,8 @@ XML;
 </object>
 XML;
     // 
-    var_dump($reader->read($xml));
-    // $this->assertEquals($course, $reader->read($xml));
+    // var_dump($reader->read($xml));
+    $this->assertEquals($student, $reader->read($xml));
   }
 
 }
