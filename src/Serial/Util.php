@@ -56,6 +56,10 @@ abstract class Util {
     }
   }
 
+  public static function isPrimitiveType($type) {
+    return static::isStringableType($type);
+  }
+
   /**
    * [getType description]
    * @param  [type] $typeMeMaybe [description]
@@ -95,12 +99,16 @@ abstract class Util {
     }
   }
 
+  public static function isPrimitive($value): bool {
+    return is_scalar($value);
+  }
+
   public static function isPrimitiveArray($array): bool {
     if (!is_array($array) && !($array instanceof ArrayObject)) {
       return false;
     }
     foreach ($array as $value) {
-      if (!is_scalar($value)) {
+      if (!static::isPrimitive($value)) {
         return false;
       }
     }
