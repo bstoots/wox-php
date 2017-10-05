@@ -9,5 +9,18 @@
             "email": "bstoots@gmail.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bstoots\\WOX\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bstoots\\WOX\\Tests\\": "tests/"
+        }
+    }
 }
