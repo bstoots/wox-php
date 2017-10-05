@@ -8,5 +8,5 @@ interface ObjectReader extends Serial {
    * @param xob The JDOM element that represents the object.
    * @return A live object.
    */
-  public function read($xob);
+  public function read(string $xob);
 }
