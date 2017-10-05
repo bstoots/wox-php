@@ -13,19 +13,46 @@ abstract class Util {
    * @return mixed Returns a string if possible, otherwise the original value
    */
   public static function stringify($stringMeMaybe) {
-    if (is_scalar($stringMeMaybe)) {
+    if (static::isStringable($stringMeMaybe)) {
       if (is_string($stringMeMaybe)) {
         return $stringMeMaybe;
       }
-      // 
-      // else if - Objects that can be easily converted to strings
-      // 
       else {
         return var_export($stringMeMaybe, true);
       }
     }
+    // 
+    // else if - Objects that can be easily converted to strings
+    // 
     else {
       return $stringMeMaybe;
+    }
+  }
+
+  public static function isStringable($stringMeMaybe) {
+    if (is_scalar($stringMeMaybe)) {
+      return true;
+    }
+    // 
+    // else if - Objects that can be easily converted to strings
+    // 
+    else {
+      return false;
+    }
+  }
+
+  public static function isStringableType($type) {
+    switch ($type) {
+      case "bool":
+      case "boolean":
+      case "int":
+      case "integer":
+      case "double":
+      case "float":
+      case "string":
+        return true;
+      default:
+        return false;
     }
   }
 
