@@ -115,4 +115,22 @@ abstract class Util {
     return true;
   }
 
+  public static function castToType($value, $type) {
+    switch ($type) {
+      case 'int':
+      case 'integer':
+        return intval($value, 10);
+      case 'double':
+      case 'float':
+        return floatval($value);
+      case 'bool':
+      case 'boolean':
+        return boolval($value);
+      case 'string':
+        return strval($value);
+      default:
+        return $value;
+    }
+  }
+
 }

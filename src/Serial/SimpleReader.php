@@ -77,7 +77,7 @@ class SimpleReader implements ObjectReader {
           ob = readWOXReference(xob, id);
       }
       else*/
-      if (Util::isPrimitiveArray($xob)) {
+      if ($this->isPrimitiveArray($xob)) {
         //System.out.println("readPrimitiveArray: " + xob.getAttributeValue(TYPE));
         $ob = $this->readPrimitiveArray($xob, $id);
       }
@@ -239,7 +239,7 @@ class SimpleReader implements ObjectReader {
           $name = $childNode->getAttribute(static::NAME);
           $type = $childNode->getAttribute(static::TYPE);
           if (Util::isPrimitiveType($type)) {
-            $ob->$name = $childNode->getAttribute(static::VALUE);
+            $ob->$name = Util::castToType($childNode->getAttribute(static::VALUE), $type);
           }
           else if ($type === static::ARRAY) {
             $ob = (array) $this->readElement($childNode);
@@ -354,13 +354,30 @@ class SimpleReader implements ObjectReader {
 
   }
 
+  private function isPrimitiveArray($xob): bool {
+    if ($xob->getAttribute(static::TYPE) !== static::ARRAY) {
+      return false;
+    }
+    if (!Util::isPrimitiveType($xob->getAttribute(static::ELEMENT_TYPE))) {
+      return false;
+    }
+    // @TODO - This is such a bad idea ... what happens if the the array contains strings with spaces?
+    $array = explode(' ', $xob->nodeValue);
+    return is_array($array);
+  }
+
   /**
    * It reads a Primitive Array.
    * @param xob A JDOM element.
    * @param id The id for the object.
    * @return A live object.
    */
-  // private function readPrimitiveArray(/*Element*/ $xob, /*Object*/ $id)/*: Object*/ {
+  private function readPrimitiveArray(/*Element*/ $xob, /*Object*/ $id)/*: Object*/ {
+    $array = explode(' ', $xob->nodeValue);
+    foreach ($array as $key => &$value) {
+      $value = Util::castToType($value, $xob->getAttribute(static::ELEMENT_TYPE));
+    }
+    return $array;
   //     try {
   //         //Class type = getPrimitiveType(xob.getAttributeValue(TYPE));
   //         //get the Java type that corresponds to the WOX type
@@ -488,7 +505,7 @@ class SimpleReader implements ObjectReader {
   //         e.printStackTrace();
   //         throw new RuntimeException(e);
   //     }
-  // }
+  }
 
   /**
    * Reads an Array of objects.
