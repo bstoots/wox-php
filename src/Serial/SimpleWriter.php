@@ -120,9 +120,9 @@ class SimpleWriter implements ObjectWriter {
     }
     else {
       $element = $this->dom->createElement(static::OBJECT);
-      // @TODO - Instead of hard-coding basename here we may want to do some sort of 
+      // @TODO - Instead of using getClassShortName() here we may want to do some sort of 
       //         reverse classMap as we did in the SimpleReader implementation.
-      $element->setAttribute(static::TYPE, basename(get_class($ob)));
+      $element->setAttribute(static::TYPE, Util::getClassShortName($ob));
       $this->writeFields($ob, $element, $this->dom);
     }
     $id = '';

@@ -3,6 +3,7 @@
 namespace Bstoots\WOX\Serial;
 
 use ArrayObject;
+use ReflectionClass;
 
 abstract class Util {
 
@@ -131,6 +132,11 @@ abstract class Util {
       default:
         return $value;
     }
+  }
+
+  public static function getClassShortName($object): string {
+    $reflect = new ReflectionClass($object);
+    return $reflect->getShortName();
   }
 
 }
