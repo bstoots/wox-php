@@ -110,4 +110,19 @@ XML;
     );
   }
 
+  public function testDoubleArray() {
+    $doubles = [12.45, 878.98, 987.98, 435.87, 537.87, 89.0, 0.0, 667.332];
+    $writer = new SimpleWriter();
+    // http://woxserializer.sourceforge.net/1dPrimitiveArrays.html
+    // $expectedXml = '<object type="array" elementType="double" length="8" id="0">12.45 878.98 987.98 435.87 537.87 89.0 0.0 667.332</object>';
+    // @NOTE - PHP truncates trailing zeros if they aren't necessary.  This shouldn't affect the deserialization in
+    //         other languages as far as I know but something to be aware of.
+    $expectedXml = '<object type="array" elementType="double" length="8" id="0">12.45 878.98 987.98 435.87 537.87 89 0 667.332</object>';
+    // 
+    $this->assertEquals(
+      XmlUtil::pretty($expectedXml),
+      XmlUtil::pretty($writer->write($doubles))
+    );
+  }
+
 }
