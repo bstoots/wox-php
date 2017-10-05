@@ -1,0 +1,9 @@
+language: php
+sudo: false
+addons:
+  apt:
+    packages:
+    - libxml2
+    - php7.0-cli
+    - php7.0-xml
+script: php vendor/bin/phpunit tests/
