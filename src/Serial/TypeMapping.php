@@ -39,7 +39,6 @@ trait TypeMapping {
       // 'Class.class' => "class",
       //mapJavaToWOX.put(Array.class, "array");
       default:
-        var_dump($phpType);
         return null;
     }
   }
