@@ -10,7 +10,7 @@ WOX is an XML serializer for PHP
 
 Some of the WOX main features are listed below:
 
-- Easy to use. The Easy class provides serialization and de-serialization methods.
+- Easy to use.
 - Simple XML. The XML generated is simple, easy to understand, and language independent.
 - Requires no class modifications. Classes do not require to have default constructors, getters or setters.
 - Field visibility. Currently only serializes public properties.  This may change in the future to match Java and C# implementations.
