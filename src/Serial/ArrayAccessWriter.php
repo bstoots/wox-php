@@ -14,11 +14,17 @@ class ArrayAccessWriter extends Writer  {
    *         ['key' => 'value']
    */
   protected function yieldFields($ob) {
-    // @TODO - WOX Java implementation uses reflection to grab all properties regardless of 
-    //         visibility.  I'm not in love with this so I'm going to circle back to it.
-    //         For now only public properties are serializable.
-    foreach ( $ob->getAllowedOffsets() as $key ) {
-      yield [$key => $ob[$key]];
+    // If the object implements ArrayAccess use getAllowedOffsets()
+    if ($ob instanceof \Bstoots\WOX\Contracts\ArrayAccess) {
+      foreach ( $ob->getAllowedOffsets() as $key ) {
+        yield [$key => $ob[$key]];
+      }
+    }
+    // Otherwise just get the public fields via get_object_vars()
+    else {
+      foreach ( get_object_vars($ob) as $key => $value ) {
+        yield [$key => $value];
+      }
     }
   }
 

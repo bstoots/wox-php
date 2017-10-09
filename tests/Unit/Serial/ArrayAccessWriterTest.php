@@ -48,4 +48,20 @@ final class ArrayAccessWriterTest extends TestCase {
     );
   }
 
+  public function testNonArrayAccess() {
+    $object = new \StdClass();
+    $object->foo = 'bar';
+    $writer = new ArrayAccessWriter();
+    $expectedXml = '<?xml version="1.0"?>
+<object type="stdClass" id="0">
+  <field name="foo" type="string" value="bar"/>
+</object>';
+    // 
+    // var_dump(XmlUtil::pretty($writer->write($object)));
+    $this->assertEquals(
+      XmlUtil::pretty($expectedXml),
+      XmlUtil::pretty($writer->write($object))
+    );
+  }
+
 }
