@@ -74,7 +74,7 @@ abstract class Util {
       }
     }
     else {
-      throw new \Exception('Unable to stringify value of type: ' . static::getType($stringMeMaybe, false));
+      throw new \Exception('Unable to stringify value of type: ' . static::getType($stringMeMaybe, static::TYPE_MODE_LONG));
     }
   }
 
