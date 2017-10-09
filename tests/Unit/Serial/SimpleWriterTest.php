@@ -146,5 +146,16 @@ XML;
       XmlUtil::pretty($writer->write($doubles))
     );
   }
+  
+  public function testAssocArray() {
+    $array = ['foo' => 'bar'];
+    $writer = new SimpleWriter();
+    $expectedXml = '<?xml version="1.0"?><object type="stdClass" id="0"><field name="foo" type="string" value="bar"/></object>';
+    // 
+    $this->assertEquals(
+      XmlUtil::pretty($expectedXml),
+      XmlUtil::pretty($writer->write($array))
+    );
+  }
 
 }

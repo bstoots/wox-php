@@ -77,6 +77,9 @@ abstract class Writer implements ObjectWriter {
    * @return string
    */
   public function write($ob): string {
+    if ($ob !== null && !is_array($ob) && !is_object($ob)) {
+      throw new \Exception('write only accepts arrays or objects, got: ' . var_export($ob, true));
+    }
     $this->dom = new DOMDocument();
     $this->map = new SplObjectStorage();
     $this->count = 0;
@@ -94,6 +97,11 @@ abstract class Writer implements ObjectWriter {
     if ($ob === null) {
       $element = $this->dom->createElement(static::OBJECT);
       return $element;
+    }
+
+    // Convert associative arrays to objects to avoid misuse
+    if (Util::isAssoc($ob)) {
+      $ob = (object) $ob;
     }
 
     if (is_array($ob)) {

@@ -210,4 +210,16 @@ abstract class Util {
     }
   }
 
+  /**
+   * Is the passed value either an array or ArrayObject?
+   * @param  mixed  $array
+   * @return bool
+   */
+  public static function isAssoc($array): bool {
+    if (!is_array($array) && !($array instanceof ArrayObject)) {
+      return false;
+    }
+    return count(array_filter(array_keys($array), 'is_string')) > 0;
+  }
+
 }
