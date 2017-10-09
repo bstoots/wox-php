@@ -167,6 +167,14 @@ abstract class Writer implements ObjectWriter {
         $field->setAttribute(static::TYPE, static::mapPhpToWox(Util::getType($value, Util::TYPE_MODE_SHORT)));
         $field->setAttribute(static::VALUE, Util::stringify($value));
       }
+      // 
+      else if ($value === null) {
+        // @TODO - Not sure how I want to handle this yet.  Ideally we would encode the nullness
+        //         in the XML structure.  We will know the name but not the type since type
+        //         determination is done on the fly.  Have to mull it over but for now just
+        //         skip the element altogether.
+        continue;
+      }
       // if the field is in the map (it could be a Wrapper or a String object)
       // this aims to have a more compact encoding in the XML file.
       else if (/*mapJavaToWOX.get(fields[i].getType()) != null*/ false) {

@@ -49,6 +49,27 @@ XML;
     );
   }
 
+  public function testCourseNull() {
+    $course = new Course([
+      'code' => 6756,
+      'name' => null,
+      'term' => 2
+    ]);
+    $writer = new SimpleWriter();
+    // http://woxserializer.sourceforge.net/quick.html
+    $expectedXml = <<<XML
+<object type="Course" id="0">
+    <field name="code" type="int" value="6756" />
+    <field name="term" type="int" value="2" />
+</object>
+XML;
+    // 
+    $this->assertEquals(
+      XmlUtil::pretty($expectedXml),
+      XmlUtil::pretty($writer->write($course))
+    );
+  }
+
   public function testStudent() {
     $courses = [];
     $courses[] = new Course([
@@ -146,7 +167,7 @@ XML;
       XmlUtil::pretty($writer->write($doubles))
     );
   }
-  
+
   public function testAssocArray() {
     $array = ['foo' => 'bar'];
     $writer = new SimpleWriter();
