@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Bstoots\WOX\Tests\Unit\Serial;
 
 use PHPUnit\Framework\TestCase;
-use Bstoots\WOX\Tests\Stubs\{Student, Course, Product};
+use Bstoots\WOX\Tests\Stubs\{Course, Product, Student};
 use Bstoots\WOX\Serial\{SimpleWriter, XmlUtil};
 
 /**
